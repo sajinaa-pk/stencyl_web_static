@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DSA Ninja — Road to Google</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #1e1e2e;
+    --accent: #00ff88;
+    --accent2: #7c3aed;
+    --accent3: #f59e0b;
+    --accent4: #ef4444;
+    --text: #e8e8f0;
+    --muted: #6b7280;
+    --code-bg: #0d1117;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 { background: rgba(0,255,136,0.05); top: -200px; right: -200px; }
+  .glow-2 { background: rgba(124,58,237,0.05); bottom: -200px; left: -200px; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    padding: 16px 40px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 18px;
+    color: var(--accent);
+    letter-spacing: -1px;
+  }
+  .logo span { color: var(--text); }
+  .nav-tabs { display: flex; gap: 4px; }
+  .nav-tab {
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    transition: all 0.2s;
+    border: none; background: none;
+  }
+  .nav-tab:hover { color: var(--text); background: var(--surface); }
+  .nav-tab.active { color: var(--accent); background: rgba(0,255,136,0.08); }
+
+  /* MAIN */
+  main { position: relative; z-index: 1; }
+
+  /* SECTIONS */
+  .section { display: none; padding: 40px; max-width: 1100px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* HERO */
+  .hero {
+    padding: 80px 40px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative; z-index: 1;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px;
+    background: rgba(0,255,136,0.08);
+    border: 1px solid rgba(0,255,136,0.2);
+    border-radius: 100px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+  }
+  .hero-badge::before { content: '●'; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-bottom: 24px;
+  }
+  h1 .green { color: var(--accent); }
+  h1 .dim { color: var(--muted); }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 48px;
+    font-weight: 300;
+  }
+
+  .stats-row {
+    display: flex; gap: 40px; flex-wrap: wrap;
+    padding: 32px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 60px;
+  }
+  .stat { }
+  .stat-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* SECTION TITLE */
+  .sec-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+  }
+  .sec-sub { color: var(--muted); font-size: 15px; margin-bottom: 40px; }
+
+  /* CURRICULUM GRID */
+  .curriculum { }
+  .phase {
+    margin-bottom: 48px;
+  }
+  .phase-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 20px;
+    cursor: pointer;
+  }
+  .phase-num {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .phase-1 .phase-num { background: rgba(0,255,136,0.1); color: var(--accent); }
+  .phase-2 .phase-num { background: rgba(245,158,11,0.1); color: var(--accent3); }
+  .phase-3 .phase-num { background: rgba(124,58,237,0.1); color: #a78bfa; }
+  .phase-4 .phase-num { background: rgba(239,68,68,0.1); color: var(--accent4); }
+
+  .phase-title-block h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .phase-title-block p { font-size: 13px; color: var(--muted); }
+
+  .phase-meta {
+    margin-left: auto;
+    display: flex; gap: 12px;
+  }
+  .tag {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+    padding-left: 52px;
+  }
+  .topic-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .topic-card:hover {
+    border-color: rgba(0,255,136,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  .topic-card.done {
+    border-color: rgba(0,255,136,0.4);
+    background: rgba(0,255,136,0.04);
+  }
+  .topic-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .topic-name { font-weight: 600; font-size: 15px; }
+  .topic-check {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .topic-card.done .topic-check {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+  }
+  .topic-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .topic-tag {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--surface2);
+  }
+
+  /* PROGRESS BAR */
+  .progress-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 40px;
+  }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .progress-label span { font-size: 14px; color: var(--muted); }
+  .progress-label strong { font-family: 'Space Mono', monospace; font-size: 14px; color: var(--accent); }
+  .progress-bar {
+    height: 6px; background: var(--border);
+    border-radius: 100px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #00ccff);
+    border-radius: 100px;
+    transition: width 0.5s ease;
+  }
+
+  /* PROMPTS SECTION */
+  .prompts-grid { display: grid; gap: 20px; }
+  .prompt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .prompt-card:hover { border-color: rgba(124,58,237,0.4); }
+  .prompt-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .prompt-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    background: var(--surface2);
+  }
+  .prompt-title { font-weight: 600; font-size: 16px; }
+  .prompt-purpose { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .prompt-body { padding: 20px 24px; }
+  .prompt-text {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #c9d1d9;
+    white-space: pre-wrap;
+    position: relative;
+  }
+  .copy-btn {
+    position: absolute; top: 10px; right: 10px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .copy-btn.copied { color: var(--accent); border-color: var(--accent); }
+  .prompt-var {
+    display: inline-block;
+    color: var(--accent3);
+    background: rgba(245,158,11,0.1);
+    padding: 0 4px;
+    border-radius: 3px;
+  }
+
+  /* CONCEPTS DEEP DIVE */
+  .concept-accordion { display: grid; gap: 12px; }
+  .concept-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .concept-trigger {
+    padding: 20px 24px;
+    display: flex; align-items: center; gap: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .concept-trigger:hover { background: var(--surface2); }
+  .concept-emoji { font-size: 22px; flex-shrink: 0; }
+  .concept-info { flex: 1; }
+  .concept-name { font-weight: 600; font-size: 16px; }
+  .concept-tagline { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .concept-difficulty {
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 11px; font-family: 'Space Mono', monospace;
+  }
+  .diff-easy { background: rgba(0,255,136,0.1); color: var(--accent); }
+  .diff-med { background: rgba(245,158,11,0.1); color: var(--accent3); }
+  .diff-hard { background: rgba(239,68,68,0.1); color: var(--accent4); }
+  .concept-chevron { color: var(--muted); font-size: 18px; transition: transform 0.2s; }
+  .concept-item.open .concept-chevron { transform: rotate(180deg); }
+
+  .concept-body {
+    display: none;
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+  }
+  .concept-item.open .concept-body { display: block; padding-top: 20px; }
+
+  .concept-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media(max-width:700px){ .concept-sections{grid-template-columns:1fr;} }
+
+  .cs-box {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .cs-box h4 {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .cs-box p, .cs-box li {
+    font-size: 13px;
+    color: #c9d1d9;
+    line-height: 1.7;
+  }
+  .cs-box ul { padding-left: 16px; }
+  .cs-box code {
+    font-family: 'Space Mono', monospace;
+    color: var(--accent);
+    font-size: 12px;
+    background: rgba(0,255,136,0.08);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .complexity-table { width: 100%; font-size: 12px; font-family: 'Space Mono', monospace; border-collapse: collapse; }
+  .complexity-table th, .complexity-table td {
+    padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border);
+  }
+  .complexity-table th { color: var(--muted); font-size: 11px; letter-spacing: 0.5px; }
+  .complexity-table td { color: #c9d1d9; }
+  .complexity-table td:last-child { color: var(--accent); }
+
+  /* ROADMAP */
+  .roadmap { position: relative; }
+  .roadmap::before {
+    content: '';
+    position: absolute;
+    left: 17px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+  }
+  .rm-item {
+    display: flex; gap: 24px;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .rm-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    z-index: 1;
+    transition: all 0.3s;
+  }
+  .rm-dot.current { border-color: var(--accent); color: var(--accent); background: rgba(0,255,136,0.1); }
+  .rm-dot.done { border-color: var(--accent); background: var(--accent); color: #000; }
+  .rm-content {
+    flex: 1; padding-bottom: 8px;
+  }
+  .rm-week {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .rm-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 8px; }
+  .rm-topics { display: flex; gap: 8px; flex-wrap: wrap; }
+  .rm-topic {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .rm-problems {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .rm-problems strong { color: var(--text); }
+
+  /* PATTERNS */
+  .patterns-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+  .pattern-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.2s;
+  }
+  .pattern-card:hover {
+    border-color: rgba(124,58,237,0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+  .pattern-icon { font-size: 28px; margin-bottom: 14px; }
+  .pattern-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .pattern-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 16px; }
+  .pattern-examples { }
+  .pattern-examples h5 { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); letter-spacing: 1px; margin-bottom: 8px; }
+  .pattern-ex { font-size: 12px; color: #c9d1d9; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .pattern-ex:last-child { border: none; }
+
+  /* TIPS */
+  .tips-grid { display: grid; gap: 16px; }
+  .tip-card {
+    display: flex; gap: 20px; align-items: flex-start;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 24px;
+  }
+  .tip-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--border);
+    min-width: 40px;
+    line-height: 1;
+  }
+  .tip-content h4 { font-weight: 600; margin-bottom: 6px; }
+  .tip-content p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+  .tip-content code {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(0,255,136,0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<div class="glow glow-1"></div>
+<div class="glow glow-2"></div>
+
+<nav>
+  <div class="logo">DSA<span>Ninja</span>.dev</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('home', this)">Home</button>
+    <button class="nav-tab" onclick="showSection('curriculum', this)">Curriculum</button>
+    <button class="nav-tab" onclick="showSection('prompts', this)">AI Prompts</button>
+    <button class="nav-tab" onclick="showSection('concepts', this)">Concepts</button>
+    <button class="nav-tab" onclick="showSection('patterns', this)">Patterns</button>
+    <button class="nav-tab" onclick="showSection('roadmap', this)">Roadmap</button>
+  </div>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="section active">
+  <div class="hero">
+    <div class="hero-badge">GOOGLE · META · AMAZON · MICROSOFT</div>
+    <h1>Become a<br><span class="green">DSA Ninja.</span><br><span class="dim">From Zero.</span></h1>
+    <p class="hero-sub">The complete system to master Data Structures & Algorithms — with the exact AI prompts, structured curriculum, and battle-tested patterns to crack any FAANG interview.</p>
+
+    <div class="stats-row">
+      <div class="stat"><div class="stat-num">16</div><div class="stat-label">Week curriculum</div></div>
+      <div class="stat"><div class="stat-num">450+</div><div class="stat-label">Problems to solve</div></div>
+      <div class="stat"><div class="stat-num">20</div><div class="stat-label">Core patterns</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label">AI-powered help</div></div>
+    </div>
+
+    <div class="tips-grid">
+      <div class="tip-card" style="border-color:rgba(0,255,136,0.2)">
+        <div class="tip-num" style="color:var(--accent)">01</div>
+        <div class="tip-content">
+          <h4>How to use this guide</h4>
+          <p>Navigate using the tabs above. Start with <strong>Roadmap</strong> to see the 16-week plan. Use <strong>AI Prompts</strong> to get deep explanations from Claude. Track progress in <strong>Curriculum</strong>.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">02</div>
+        <div class="tip-content">
+          <h4>The 3-Pass Method</h4>
+          <p><strong>Pass 1:</strong> Read the problem — try for 15 min alone.<br>
+          <strong>Pass 2:</strong> Look at the pattern category — try again 10 min.<br>
+          <strong>Pass 3:</strong> Use AI prompt → understand deeply → code from scratch.</p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">03</div>
+        <div class="tip-content">
+          <h4>Daily Schedule</h4>
+          <p>
+            <code>9-10am</code> Review yesterday's solutions<br>
+            <code>10am-1pm</code> 2-3 new problems (focus mode)<br>
+            <code>3-5pm</code> 1 concept deep-dive with AI<br>
+            <code>8-9pm</code> Spaced repetition review
+          </p>
+        </div>
+      </div>
+      <div class="tip-card">
+        <div class="tip-num">04</div>
+        <div class="tip-content">
+          <h4>The Golden Rule</h4>
+          <p>Never just read solutions. Always <strong>code from memory</strong> after understanding. The act of struggling builds the neural pathways that fire in real interviews. Discomfort = growth.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CURRICULUM -->
+<div id="curriculum" class="section">
+  <div class="sec-title">Full Curriculum</div>
+  <div class="sec-sub">Click any topic to mark it done. Track your progress to the top.</div>
+
+  <div class="progress-section">
+    <div class="progress-label">
+      <span>Overall Progress</span>
+      <strong id="prog-text">0 / 48 topics</strong>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="curriculum" id="curr"></div>
+</div>
+
+<!-- AI PROMPTS -->
+<div id="prompts" class="section">
+  <div class="sec-title">Master AI Prompts</div>
+  <div class="sec-sub">Copy these exact prompts into Claude to get Google-level DSA explanations. Replace <span style="color:var(--accent3)">[bracketed parts]</span> with your specific topic.</div>
+  <div class="prompts-grid" id="prompts-grid"></div>
+</div>
+
+<!-- CONCEPTS -->
+<div id="concepts" class="section">
+  <div class="sec-title">Deep Concept Library</div>
+  <div class="sec-sub">Every major data structure with time/space complexity, use cases, and interview insights.</div>
+  <div class="concept-accordion" id="concept-acc"></div>
+</div>
+
+<!-- PATTERNS -->
+<div id="patterns" class="section">
+  <div class="sec-title">The 15 Killer Patterns</div>
+  <div class="sec-sub">Master these patterns and you can solve 90% of interview problems. Every hard problem is a pattern in disguise.</div>
+  <div class="patterns-grid" id="patterns-grid"></div>
+</div>
+
+<!-- ROADMAP -->
+<div id="roadmap" class="section">
+  <div class="sec-title">16-Week Battle Plan</div>
+  <div class="sec-sub">Week-by-week execution to go from beginner to FAANG-ready. Non-negotiable — stick to the plan.</div>
+  <div class="roadmap" id="roadmap-list"></div>
+</div>
+
+<script>
+// ─── NAVIGATION ───────────────────────────────────────────────
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─── CURRICULUM DATA ──────────────────────────────────────────
+const curriculum = [
+  {
+    phase: 1, label: 'Phase 1', title: 'Foundations',
+    sub: 'Arrays, Strings, Big-O', weeks: 'Wk 1-3',
+    color: 'phase-1',
+    topics: [
+      { name: 'Big-O Notation', tags: ['Theory', 'Critical'] },
+      { name: 'Arrays', tags: ['Linear', 'Indexing'] },
+      { name: 'Strings & Manipulation', tags: ['Linear', 'Hashing'] },
+      { name: 'Two Pointers', tags: ['Pattern', 'O(n)'] },
+      { name: 'Sliding Window', tags: ['Pattern', 'O(n)'] },
+      { name: 'Prefix Sum', tags: ['Technique', 'O(n)'] },
+      { name: 'Hash Maps & Hash Sets', tags: ['O(1) lookup', 'Critical'] },
+      { name: 'Binary Search', tags: ['O(log n)', 'Pattern'] },
+      { name: 'Sorting Algorithms', tags: ['Theory', 'QuickSort'] },
+    ]
+  },
+  {
+    phase: 2, label: 'Phase 2', title: 'Linear Structures',
+    sub: 'Linked Lists, Stacks, Queues', weeks: 'Wk 4-6',
+    color: 'phase-2',
+    topics: [
+      { name: 'Linked Lists (Singly)', tags: ['Pointers', 'O(n)'] },
+      { name: 'Doubly Linked Lists', tags: ['Pointers', 'Bidirectional'] },
+      { name: 'Fast & Slow Pointers', tags: ['Pattern', 'Floyd Cycle'] },
+      { name: 'Stacks', tags: ['LIFO', 'Monotonic'] },
+      { name: 'Queues & Deques', tags: ['FIFO', 'Sliding'] },
+      { name: 'Monotonic Stack', tags: ['Pattern', 'Advanced'] },
+      { name: 'LRU Cache Design', tags: ['Design', 'Interview Fav'] },
+    ]
+  },
+  {
+    phase: 3, label: 'Phase 3', title: 'Trees & Graphs',
+    sub: 'Binary Trees, BST, BFS/DFS, Heaps', weeks: 'Wk 7-11',
+    color: 'phase-3',
+    topics: [
+      { name: 'Binary Trees', tags: ['Recursive', 'Traversal'] },
+      { name: 'Binary Search Trees', tags: ['O(log n)', 'Balanced'] },
+      { name: 'BFS (Level Order)', tags: ['Queue', 'Shortest Path'] },
+      { name: 'DFS (Recursive + Iterative)', tags: ['Stack', 'Backtrack'] },
+      { name: 'Tree DP', tags: ['Advanced', 'Path Problems'] },
+      { name: 'Segment Trees', tags: ['Advanced', 'Range Query'] },
+      { name: 'Tries (Prefix Trees)', tags: ['String', 'Autocomplete'] },
+      { name: 'Heaps & Priority Queues', tags: ['O(log n)', 'K-problems'] },
+      { name: 'Graph Representation', tags: ['Adjacency', 'Theory'] },
+      { name: 'Graph BFS/DFS', tags: ['Visited Set', 'Islands'] },
+      { name: "Dijkstra's Algorithm", tags: ['Weighted', 'Shortest Path'] },
+      { name: 'Union-Find (DSU)', tags: ['Connected Components', 'Kruskal'] },
+      { name: 'Topological Sort', tags: ['DAG', 'Course Schedule'] },
+    ]
+  },
+  {
+    phase: 4, label: 'Phase 4', title: 'Advanced & DP',
+    sub: 'Dynamic Programming, Backtracking, Advanced Graphs', weeks: 'Wk 12-16',
+    color: 'phase-4',
+    topics: [
+      { name: 'Recursion & Backtracking', tags: ['Brute Force', 'State Space'] },
+      { name: 'Memoization (Top-Down DP)', tags: ['Cache', 'Recursion+'] },
+      { name: '1D Dynamic Programming', tags: ['Tabulation', 'Fibonacci'] },
+      { name: '2D Dynamic Programming', tags: ['Grid', 'String DP'] },
+      { name: 'Knapsack Problems', tags: ['Classic', '0/1 Knapsack'] },
+      { name: 'Interval DP', tags: ['Merge Intervals', 'MCM'] },
+      { name: 'Bit Manipulation', tags: ['XOR', 'Masks'] },
+      { name: 'Math & Number Theory', tags: ['GCD', 'Primes'] },
+      { name: 'Greedy Algorithms', tags: ['Interval', 'Local Optimal'] },
+      { name: 'Bellman-Ford', tags: ['Negative Weights', 'SSSP'] },
+      { name: 'Floyd-Warshall', tags: ['All Pairs', 'APSP'] },
+      { name: 'Advanced String (KMP/Z)', tags: ['Pattern Match', 'O(n)'] },
+    ]
+  }
+];
+
+function buildCurriculum() {
+  const container = document.getElementById('curr');
+  const state = JSON.parse(localStorage.getItem('dsa-progress') || '{}');
+  let total = 0, done = 0;
+
+  curriculum.forEach(phase => {
+    const div = document.createElement('div');
+    div.className = `phase ${phase.color}`;
+    const topicsHTML = phase.topics.map((t, i) => {
+      const key = `${phase.phase}-${i}`;
+      total++;
+      if (state[key]) done++;
+      return `<div class="topic-card ${state[key]?'done':''}" onclick="toggleTopic('${key}',this)">
+        <div class="topic-top">
+          <span class="topic-name">${t.name}</span>
+          <div class="topic-check">${state[key]?'✓':''}</div>
+        </div>
+        <div class="topic-meta">${t.tags.map(tag=>`<span class="topic-tag">${tag}</span>`).join('')}</div>
+      </div>`;
+    }).join('');
+
+    div.innerHTML = `
+      <div class="phase-header">
+        <div class="phase-num">${phase.label.replace('Phase ','P')}</div>
+        <div class="phase-title-block">
+          <h3>${phase.title}</h3>
+          <p>${phase.sub}</p>
+        </div>
+        <div class="phase-meta">
+          <span class="tag">${phase.weeks}</span>
+          <span class="tag">${phase.topics.length} topics</span>
+        </div>
+      </div>
+      <div class="topics-grid">${topicsHTML}</div>`;
+    container.appendChild(div);
+  });
+
+  updateProgress(done, total);
+}
+
+function toggleTopic(key, card) {
+  const state = JSON.parse(localStorage.getItem('dsa-progress') || '{}');
+  state[key] = !state[key];
+  localStorage.setItem('dsa-progress', JSON.stringify(state));
+  card.classList.toggle('done');
+  const check = card.querySelector('.topic-check');
+  check.textContent = state[key] ? '✓' : '';
+
+  // recalculate
+  const allCards = document.querySelectorAll('.topic-card');
+  const total = allCards.length;
+  const done = document.querySelectorAll('.topic-card.done').length;
+  updateProgress(done, total);
+}
+
+function updateProgress(done, total) {
+  document.getElementById('prog-text').textContent = `${done} / ${total} topics`;
+  document.getElementById('prog-fill').style.width = `${(done/total)*100}%`;
+}
+
+// ─── PROMPTS DATA ─────────────────────────────────────────────
+const prompts = [
+  {
+    icon: '🧠',
+    title: 'Deep Concept Explanation',
+    purpose: 'Use when learning any new DSA topic from scratch',
+    text: `You are a world-class DSA instructor teaching a senior engineer candidate preparing for Google interviews. 
+
+Teach me [TOPIC] with:
+1. The core intuition in plain English (no jargon first)
+2. A real-world analogy that makes it click
+3. The exact mental model I should have
+4. Time complexity: best, average, worst case — with WHY
+5. Space complexity with explanation
+6. When to use this vs alternatives
+7. 3 common interview problems that use this pattern
+8. The one insight that separates beginners from experts
+
+Be brutally honest about what trips people up. Show code examples in Python.`
+  },
+  {
+    icon: '🔍',
+    title: 'Problem Solving Framework',
+    purpose: 'Use when stuck on any LeetCode problem',
+    text: `I'm solving [PROBLEM NAME/DESCRIPTION] on LeetCode.
+
+Walk me through it as a Google senior engineer would think:
+
+1. Restate the problem in your own words
+2. Identify the pattern/category (don't give it away yet)
+3. Ask: What data structure would reduce the bottleneck?
+4. Guide me through the brute force first
+5. Show how to optimize step by step (each optimization as an "aha")
+6. Explain the final solution with line-by-line reasoning
+7. What edge cases would a Google interviewer test?
+8. What follow-up questions should I expect?
+
+After explanation, write clean Python code with comments explaining every non-obvious line.`
+  },
+  {
+    icon: '⚡',
+    title: 'Pattern Recognition Drill',
+    purpose: 'Use to build instinct for recognizing patterns fast',
+    text: `Give me a pattern recognition drill for [PATTERN NAME, e.g. "Sliding Window"].
+
+Format:
+1. The 3-5 KEY SIGNALS in a problem that scream this pattern
+2. The template/skeleton code I should memorize
+3. 5 problems from easy → hard that use this pattern
+4. For each problem: one sentence on WHY this pattern fits
+5. Common variations/mutations of this pattern
+6. Anti-patterns: when it looks like this pattern but ISN'T
+
+End with a "pattern fingerprint" — a mental checklist I can run in 10 seconds.`
+  },
+  {
+    icon: '🗺️',
+    title: 'Complexity Analysis Mastery',
+    purpose: 'Use to master Big-O reasoning for any algorithm',
+    text: `Teach me to analyze time and space complexity of [ALGORITHM/CODE SNIPPET].
+
+Cover:
+1. Step-by-step complexity derivation (show all work)
+2. How to handle nested loops, recursion, multiple inputs
+3. The difference between worst, average, and amortized complexity
+4. Master theorem for recursive cases
+5. Space complexity: stack frames, auxiliary vs total
+6. How to simplify with Big-O rules
+
+Then quiz me: give me 5 code snippets and have me guess the complexity before revealing answers. Be a tough grader.`
+  },
+  {
+    icon: '💬',
+    title: 'Mock Interview Simulator',
+    purpose: 'Use to practice real interview conditions',
+    text: `Conduct a mock Google coding interview with me. You are the interviewer — a senior Google engineer. 
+
+Rules:
+- Give me a [EASY/MEDIUM/HARD] problem related to [TOPIC]
+- Only give hints if I'm completely stuck after 5 minutes of silence
+- Ask me to think out loud as I solve
+- After I give a solution, ask: "Can you do better?"
+- Rate my performance on: problem understanding, approach, code quality, edge case handling, communication
+
+Start NOW — give me the problem statement only. No hints until I ask.`
+  },
+  {
+    icon: '🔧',
+    title: 'Code Review & Optimization',
+    purpose: 'Use to improve code quality to Google standards',
+    text: `Review my solution to [PROBLEM] as a Google code reviewer would.
+
+My code:
+[PASTE YOUR CODE HERE]
+
+Critique it on:
+1. Correctness (does it handle all edge cases?)
+2. Time complexity (is this optimal?)
+3. Space complexity (any unnecessary space usage?)
+4. Code style (readability, naming, structure)
+5. Pythonic/idiomatic quality
+6. What a Google interviewer would LOVE about it
+7. What would cause an automatic rejection
+
+Then rewrite it as the ideal Google-accepted solution, explaining every change.`
+  },
+  {
+    icon: '📊',
+    title: 'Spaced Repetition Review',
+    purpose: 'Use every Sunday to review the past week',
+    text: `Quiz me on [LIST OF TOPICS FROM THIS WEEK] using spaced repetition.
+
+Format for each topic:
+1. Ask me a conceptual question (no coding)
+2. Then a pattern recognition question
+3. Then give me a 5-minute coding challenge
+4. Grade each response 1-5 and tell me what to review more
+
+Be strict. If I get something partially right, say so. 
+After the quiz, give me a "weakness report" — the 3 things I should drill hardest next week.
+
+Topics to cover: [e.g. Binary Trees, BFS, DFS, Heaps]`
+  },
+  {
+    icon: '🏗️',
+    title: 'System Design + DSA Bridge',
+    purpose: 'Use to connect DSA to real system design (senior-level)',
+    text: `Explain how [DSA CONCEPT] is used in real-world systems at Google/Meta scale.
+
+For [e.g. "Hash Tables"]:
+1. Where is this used in production? (Give 3-5 real examples)
+2. How does the implementation differ at billion-scale vs textbook?
+3. What tradeoffs do engineers make in practice?
+4. Related system design concepts I should know
+5. How would this come up in a senior engineer interview?
+
+Connect theory to engineering reality. Make me think like a staff engineer, not a student.`
+  }
+];
+
+function buildPrompts() {
+  const container = document.getElementById('prompts-grid');
+  prompts.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'prompt-card';
+    div.innerHTML = `
+      <div class="prompt-header">
+        <div class="prompt-icon">${p.icon}</div>
+        <div>
+          <div class="prompt-title">${p.title}</div>
+          <div class="prompt-purpose">${p.purpose}</div>
+        </div>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-text">${escapeHTML(p.text)}<button class="copy-btn" onclick="copyPrompt(this, \`${escapeTick(p.text)}\`)">Copy</button></div>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function escapeHTML(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\[([^\]]+)\]/g, '<span class="prompt-var">[$1]</span>');
+}
+function escapeTick(str) { return str.replace(/`/g,'\\`').replace(/\$/g,'\\$'); }
+
+function copyPrompt(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ─── CONCEPTS DATA ────────────────────────────────────────────
+const concepts = [
+  {
+    emoji: '🗂️', name: 'Hash Map / Hash Table', tagline: 'The most powerful weapon in DSA',
+    diff: 'easy', diffLabel: 'Foundation',
+    intuition: 'A hash map stores key-value pairs with O(1) average lookup. The key is run through a hash function that maps it to an index in an array. Collisions are handled via chaining (linked list at each bucket) or open addressing.',
+    whenToUse: ['Need O(1) lookup, insert, delete', 'Counting frequencies of elements', 'Two-sum type problems (complement lookup)', 'Deduplication', 'Caching / memoization'],
+    complexities: [
+      { op: 'Lookup', avg: 'O(1)', worst: 'O(n)' },
+      { op: 'Insert', avg: 'O(1)', worst: 'O(n)' },
+      { op: 'Delete', avg: 'O(1)', worst: 'O(n)' },
+    ],
+    gotcha: 'In Python, dict and set are hash maps. For interview, know: if you need ordered insertion, use collections.OrderedDict. For counting, use collections.Counter.',
+  },
+  {
+    emoji: '🌲', name: 'Binary Tree', tagline: 'The foundation of all hierarchical thinking',
+    diff: 'med', diffLabel: 'Core',
+    intuition: 'A tree where each node has at most 2 children. Almost all tree problems are solved with recursion — define what you need from left child, what from right child, combine at current node.',
+    whenToUse: ['Hierarchical data representation', 'Range queries (BST)', 'Expression evaluation', 'Decision trees', 'Prefix storage (Tries)'],
+    complexities: [
+      { op: 'Search (BST)', avg: 'O(log n)', worst: 'O(n)' },
+      { op: 'Traversal', avg: 'O(n)', worst: 'O(n)' },
+      { op: 'Insert (BST)', avg: 'O(log n)', worst: 'O(n)' },
+    ],
+    gotcha: 'The recursive formula: think about what value you need from left subtree, what from right subtree, and how to combine at current node. Almost every tree problem follows this.',
+  },
+  {
+    emoji: '⛰️', name: 'Heap / Priority Queue', tagline: 'When you need the min or max instantly',
+    diff: 'med', diffLabel: 'Core',
+    intuition: 'A complete binary tree maintained as an array where every parent is smaller (min-heap) or larger (max-heap) than its children. Heapify operations maintain this property in O(log n). Python heapq is a min-heap.',
+    whenToUse: ['"K largest/smallest" problems', 'Merge K sorted lists', 'Dijkstra\'s algorithm', 'Scheduling / task ordering', 'Median of stream'],
+    complexities: [
+      { op: 'Push', avg: 'O(log n)', worst: 'O(log n)' },
+      { op: 'Pop', avg: 'O(log n)', worst: 'O(log n)' },
+      { op: 'Peek', avg: 'O(1)', worst: 'O(1)' },
+      { op: 'Build Heap', avg: 'O(n)', worst: 'O(n)' },
+    ],
+    gotcha: 'Python only has min-heap. For max-heap, negate values: push -val, when popping, negate back. For K largest: maintain a min-heap of size K — when heap grows past K, pop the smallest.',
+  },
+  {
+    emoji: '🔗', name: 'Linked List', tagline: 'Pointers and pointer arithmetic',
+    diff: 'easy', diffLabel: 'Foundation',
+    intuition: 'Nodes connected via next pointers. No random access — must traverse. Core trick: use a dummy head node to simplify edge cases. For cycle detection: fast/slow pointers (Floyd\'s algorithm).',
+    whenToUse: ['Need O(1) insertion/deletion at known position', 'Implement LRU Cache', 'Reverse operations', 'Merge sorted lists'],
+    complexities: [
+      { op: 'Access', avg: 'O(n)', worst: 'O(n)' },
+      { op: 'Insert (at head)', avg: 'O(1)', worst: 'O(1)' },
+      { op: 'Delete (known node)', avg: 'O(1)', worst: 'O(1)' },
+      { op: 'Search', avg: 'O(n)', worst: 'O(n)' },
+    ],
+    gotcha: 'Always draw out your pointer manipulations. When reversing, you need prev, curr, next. When merging, use a dummy head. Cycle detection: when fast meets slow, reset one to head, advance both by 1 to find cycle start.',
+  },
+  {
+    emoji: '📚', name: 'Stack', tagline: 'LIFO — the engine of recursion',
+    diff: 'easy', diffLabel: 'Foundation',
+    intuition: 'Last In, First Out. Anything recursive can be converted to iterative with an explicit stack. Key pattern: monotonic stack — maintains elements in sorted order, used for "next greater element" type problems.',
+    whenToUse: ['Matching brackets/parentheses', 'Undo operations', 'DFS iterative', 'Expression evaluation', 'Monotonic problems (next greater/smaller)'],
+    complexities: [
+      { op: 'Push', avg: 'O(1)', worst: 'O(1)' },
+      { op: 'Pop', avg: 'O(1)', worst: 'O(1)' },
+      { op: 'Peek', avg: 'O(1)', worst: 'O(1)' },
+    ],
+    gotcha: 'Monotonic stack pattern: for "next greater element" — iterate array, maintain decreasing stack. When current > stack top, we found the answer for the top element. This runs in O(n) total despite looking O(n²).',
+  },
+  {
+    emoji: '🗺️', name: 'Graph', tagline: 'The most general structure — everything is a graph',
+    diff: 'hard', diffLabel: 'Advanced',
+    intuition: 'Vertices + Edges. Can be directed/undirected, weighted/unweighted, cyclic/acyclic. BFS for shortest unweighted path. DFS for connectivity, cycle detection, topological sort. Always track visited set.',
+    whenToUse: ['Network connectivity', 'Shortest path problems', 'Dependency resolution (topological sort)', 'Social network analysis', 'Grid problems (treat as implicit graph)'],
+    complexities: [
+      { op: 'BFS/DFS', avg: 'O(V+E)', worst: 'O(V+E)' },
+      { op: 'Dijkstra', avg: 'O((V+E)logV)', worst: 'O((V+E)logV)' },
+      { op: 'Bellman-Ford', avg: 'O(VE)', worst: 'O(VE)' },
+    ],
+    gotcha: 'Grid problems ARE graph problems. Each cell is a node, adjacent cells are edges. Don\'t over-think it. For topological sort: use Kahn\'s algorithm (BFS with in-degree) — it\'s cleaner than DFS in interviews.',
+  }
+];
+
+function buildConcepts() {
+  const acc = document.getElementById('concept-acc');
+  concepts.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'concept-item';
+    const whenHTML = c.whenToUse.map(w=>`<li>${w}</li>`).join('');
+    const compHTML = c.complexities.map(r=>`<tr><td>${r.op}</td><td>${r.avg}</td><td>${r.worst}</td></tr>`).join('');
+    div.innerHTML = `
+      <div class="concept-trigger" onclick="toggleConcept(this)">
+        <div class="concept-emoji">${c.emoji}</div>
+        <div class="concept-info">
+          <div class="concept-name">${c.name}</div>
+          <div class="concept-tagline">${c.tagline}</div>
+        </div>
+        <div class="concept-difficulty diff-${c.diff}">${c.diffLabel}</div>
+        <div class="concept-chevron">▾</div>
+      </div>
+      <div class="concept-body">
+        <div class="concept-sections">
+          <div class="cs-box" style="grid-column:1/-1">
+            <h4>Core Intuition</h4>
+            <p>${c.intuition}</p>
+          </div>
+          <div class="cs-box">
+            <h4>When To Use</h4>
+            <ul>${whenHTML}</ul>
+          </div>
+          <div class="cs-box">
+            <h4>Complexity</h4>
+            <table class="complexity-table">
+              <tr><th>Operation</th><th>Average</th><th>Worst</th></tr>
+              ${compHTML}
+            </table>
+          </div>
+          <div class="cs-box" style="grid-column:1/-1">
+            <h4>🔴 The Gotcha (Interviewers Love This)</h4>
+            <p>${c.gotcha}</p>
+          </div>
+        </div>
+      </div>`;
+    acc.appendChild(div);
+  });
+}
+
+function toggleConcept(trigger) {
+  const item = trigger.closest('.concept-item');
+  item.classList.toggle('open');
+}
+
+// ─── PATTERNS DATA ────────────────────────────────────────────
+const patterns = [
+  { icon:'🪟', name:'Sliding Window', desc:'Maintain a window over an array/string. Expand right, shrink left when constraint violated.', examples:['Longest substring without repeating chars','Minimum window substring','Max sum subarray of size K','Permutation in string'] },
+  { icon:'👆👆', name:'Two Pointers', desc:'Use two pointers moving toward each other or in the same direction to avoid nested loops.', examples:['Two Sum (sorted array)','Container with most water','Three Sum','Remove duplicates from sorted array'] },
+  { icon:'🐢🐇', name:'Fast & Slow Pointers', desc:'Two pointers at different speeds. The slow pointer lags behind fast. Classic for cycle detection.', examples:['Linked list cycle detection','Find middle of linked list','Happy number','Reorder linked list'] },
+  { icon:'🔀', name:'Merge Intervals', desc:'Sort intervals, then merge overlapping ones. Pointer through sorted intervals.', examples:['Merge intervals','Insert interval','Non-overlapping intervals','Meeting rooms II'] },
+  { icon:'🔄', name:'Cyclic Sort', desc:'For arrays containing n numbers in range [1,n]. Place each number at its correct index.', examples:['Find missing number','Find all duplicates','Find duplicate number','First missing positive'] },
+  { icon:'↩️', name:'Reverse Linked List', desc:'In-place reversal using prev/curr/next pointers. Often combined with two pointers.', examples:['Reverse linked list','Reverse sublist','Reverse every K elements','Palindrome linked list'] },
+  { icon:'🌊', name:'BFS (Level Order)', desc:'Use a queue. Process level by level. Optimal for shortest path in unweighted graphs.', examples:['Binary tree level order','Shortest path in matrix','Word ladder','Rotting oranges'] },
+  { icon:'🌀', name:'DFS + Backtracking', desc:'Explore all options recursively. Backtrack when constraint fails. State space tree.', examples:['Subsets','Permutations','Combination sum','N-Queens','Sudoku solver'] },
+  { icon:'📊', name:'Dynamic Programming', desc:'Break problem into overlapping subproblems. Cache results. Bottom-up or top-down.', examples:['Climbing stairs','Longest common subsequence','Knapsack','Edit distance','Coin change'] },
+  { icon:'🔢', name:'Binary Search', desc:'Halve search space each time. Works on sorted arrays AND on answer space.', examples:['Search in rotated array','Find peak element','Koko eating bananas','Median of two sorted arrays'] },
+  { icon:'🏔️', name:'Top K Elements', desc:'Use a heap of size K. When heap exceeds K, pop the min (for K largest) or max.', examples:['K largest elements','Top K frequent elements','K closest points to origin','Find median from data stream'] },
+  { icon:'⛓️', name:'Merge K Lists', desc:'Use a min-heap with one element from each list. Always pull the global minimum.', examples:['Merge K sorted lists','Smallest range covering K lists','K pairs with smallest sums'] },
+  { icon:'🌴', name:'Tree DP', desc:'Recursively solve subproblems on subtrees. Combine results at each node.', examples:['Diameter of binary tree','Maximum path sum','House robber III','Binary tree cameras'] },
+  { icon:'🗺️', name:'Graph Traversal', desc:'BFS/DFS on explicit or implicit graphs. Always track visited. Modify in-place or use set.', examples:['Number of islands','Clone graph','Pacific Atlantic water flow','Course schedule (topological sort)'] },
+  { icon:'🔵', name:'Union-Find (DSU)', desc:'Track connected components efficiently. Union by rank + path compression = near O(1).', examples:['Number of provinces','Redundant connection','Accounts merge','Most stones removed'] },
+];
+
+function buildPatterns() {
+  const grid = document.getElementById('patterns-grid');
+  patterns.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'pattern-card';
+    const exHTML = p.examples.map(e=>`<div class="pattern-ex">${e}</div>`).join('');
+    div.innerHTML = `
+      <div class="pattern-icon">${p.icon}</div>
+      <div class="pattern-name">${p.name}</div>
+      <div class="pattern-desc">${p.desc}</div>
+      <div class="pattern-examples">
+        <h5>CLASSIC PROBLEMS</h5>
+        ${exHTML}
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+
+// ─── ROADMAP DATA ─────────────────────────────────────────────
+const roadmap = [
+  { week:'WEEK 1-2', title:'Big-O & Arrays', problems:'~30 easy', topics:['Big-O mastery','Array basics','Hash maps','Two pointers'], status:'done' },
+  { week:'WEEK 3', title:'Strings & Sliding Window', problems:'~20 easy-medium', topics:['String manipulation','Sliding window template','Anagram problems'], status:'done' },
+  { week:'WEEK 4', title:'Binary Search', problems:'~15 medium', topics:['Classic binary search','Search variations','Answer-space binary search'], status:'current' },
+  { week:'WEEK 5', title:'Linked Lists', problems:'~20 medium', topics:['Fast/slow pointers','Reversal patterns','LRU cache'], status:'' },
+  { week:'WEEK 6', title:'Stacks & Queues', problems:'~15 medium', topics:['Monotonic stack','BFS intro','Design problems'], status:'' },
+  { week:'WEEK 7-8', title:'Binary Trees', problems:'~35 medium', topics:['All traversals','Tree DP','Path problems','BST operations'], status:'' },
+  { week:'WEEK 9', title:'Heaps', problems:'~20 medium', topics:['Min/max heap','Top K pattern','Merge K lists'], status:'' },
+  { week:'WEEK 10-11', title:'Graphs', problems:'~35 medium-hard', topics:['BFS/DFS on graphs','Union-Find','Topological sort','Dijkstra'], status:'' },
+  { week:'WEEK 12', title:'Backtracking', problems:'~20 medium-hard', topics:['Subsets','Permutations','Combination sum','N-Queens'], status:'' },
+  { week:'WEEK 13-14', title:'Dynamic Programming', problems:'~40 medium-hard', topics:['1D DP','2D DP','Knapsack','Interval DP'], status:'' },
+  { week:'WEEK 15', title:'Advanced Topics', problems:'~20 hard', topics:['Tries','Segment trees','Bit manipulation','Advanced strings'], status:'' },
+  { week:'WEEK 16', title:'Mock Interviews + Gaps', problems:'~30 mixed', topics:['Daily mocks','Weak area review','Behavioral prep','System design basics'], status:'' },
+];
+
+function buildRoadmap() {
+  const list = document.getElementById('roadmap-list');
+  roadmap.forEach((r, i) => {
+    const div = document.createElement('div');
+    div.className = 'rm-item';
+    const topicsHTML = r.topics.map(t=>`<span class="rm-topic">${t}</span>`).join('');
+    div.innerHTML = `
+      <div class="rm-dot ${r.status}">${r.status==='done'?'✓':r.status==='current'?'→':i+1}</div>
+      <div class="rm-content">
+        <div class="rm-week">${r.week}</div>
+        <div class="rm-title">${r.title}</div>
+        <div class="rm-topics">${topicsHTML}</div>
+        <div class="rm-problems">Target: <strong>${r.problems}</strong> solved</div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────
+buildCurriculum();
+buildPrompts();
+buildConcepts();
+buildPatterns();
+buildRoadmap();
+</script>
+</body>
+</html>
